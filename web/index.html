@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赛鸽归巢排序算子 · 编码键执行引擎</title>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">◈</span>
+    <div>
+      <h1>赛鸽归巢排序算子</h1>
+      <p class="sub">多列排序键 → 保序字节编码 → MSD 基数排序 · 执行引擎演示</p>
+    </div>
+  </div>
+  <div class="meta" id="meta"></div>
+</header>
+
+<main>
+  <section class="panel controls">
+    <div class="panel-head">
+      <h2>排序列定义</h2>
+      <span class="hint">表达式先求值，NULL 参与运算结果为 NULL；每列可单独设方向与空值位置</span>
+    </div>
+    <div id="columns" class="cols"></div>
+    <div class="row-actions">
+      <button id="addCol" class="ghost" type="button">+ 添加排序列</button>
+      <button id="preset" class="ghost" type="button">载入赛区/分速/归巢/鸽舍示例</button>
+    </div>
+    <div class="runbar">
+      <label>数据量 <input id="rows" type="number" value="300000" min="1000" max="3000000" step="1000"></label>
+      <label>随机种子 <input id="seed" type="number" value="7" min="0" step="1"></label>
+      <label>Top-K <input id="topK" type="number" value="0" min="0" step="1" title="0 表示全排序"></label>
+      <label>worker <input id="workers" type="number" value="0" min="0" step="1" title="0 表示 GOMAXPROCS"></label>
+      <label class="check"><input id="doCompare" type="checkbox" checked> 与逐列比较排序对比耗时</label>
+      <button id="run" class="primary" type="button">生成数据并排序</button>
+    </div>
+    <div id="error" class="error" hidden></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>编码后的键样例</h2>
+      <span class="hint" id="keyHint">每列字节按排序规则编码，整行键可直接按字节比较</span>
+    </div>
+    <div id="samples" class="samples"></div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <div class="panel-head"><h2>各阶段耗时</h2><span class="hint" id="totalHint"></span></div>
+      <div id="phases" class="phases"></div>
+      <dl id="stats" class="stats"></dl>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>速度对比</h2><span class="hint">同一份数据、同一排序定义 · 标准库 sort.SliceStable 逐列比较</span></div>
+      <div id="comparePanel" class="compare"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>排序列</h2><span class="hint">编译后的列定义与编码规则</span></div>
+    <div id="colTable"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>排序结果前 20 行</h2><span class="hint" id="orderHint"></span></div>
+    <div id="ordering" class="table-wrap"></div>
+  </section>
+</main>
+<script src="/assets/app.js"></script>
+</body>
+</html>
