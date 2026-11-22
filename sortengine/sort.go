@@ -369,9 +369,6 @@ func radixRange(ks *keyStore, idx, scratch []int32, depth int, m *counters) {
 			continue
 		}
 		m.passes++
-		if len(idx) > m.maxBucket {
-			m.maxBucket = len(idx)
-		}
 		// Stable counting sort by the byte at depth.
 		var count [257]int32
 		for _, i := range idx {
@@ -379,6 +376,11 @@ func radixRange(ks *keyStore, idx, scratch []int32, depth int, m *counters) {
 		}
 		for b := 1; b < len(count); b++ {
 			count[b] += count[b-1]
+		}
+		for b := 0; b < 256; b++ {
+			if int(count[b+1]-count[b]) > m.maxBucket {
+				m.maxBucket = int(count[b+1] - count[b])
+			}
 		}
 		// count[b] is the start of bucket b and count[b+1] its end. Walk the
 		// input in order so buckets are filled stably.
